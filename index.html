@@ -3,26 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil</title>
+    <title>Test API Create & Delete</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <section id="banner">
-        <h1>Welcome home ! </h1>
-    </section>
-    <section id="main">
-        <div class="row">
-            <div>
-                <h2>Création d'un film</h2>
-                <form id="movieForm">
-                    <label for="inputName">Titre du Film :</label>
-                    <input type="text" id="inputName" required>
+    <h2>Création d'un film</h2>
 
-                    <label for="inputAuthor">Auteur :</label>
-                    <input type="text" id="inputAuthor" required>
+    <form id="movieForm">
+        <label for="inputName">Titre du Film :</label>
+        <input type="text" id="inputName" required>
 
-                    <label for="inputDate">Date de sortie :</label>
-                    <input type="date" id="inputDate" required>
+        <label for="inputAuthor">Auteur :</label>
+        <input type="text" id="inputAuthor" required>
+
+        <label for="inputDate">Date de sortie :</label>
+        <input type="date" id="inputDate" required>
 
         <button type="submit">Entrer</button>
     </form>
@@ -30,28 +25,12 @@
     <h2>Visualisation d'un film</h2>
 
     <form id="getForm">
-        <label for="inputId">ID du Film :</label>
-        <input type="number" id="inputId" required>
-
-        <button type="submit">Chercher</button>
-    </form>
-
-    <h2>Modification d'un film</h2>
-
-    <form id="updateForm">
-        <label for="inputId">ID du Film :</label>
-        <input type="number" id="updateInputId" required>
-
-        <label for="inputName">Titre du Film :</label>
-        <input type="text" id="updateinputName">
-
-        <label for="inputAuthor">Auteur :</label>
-        <input type="text" id="updateinputAuthor">
-
-        <label for="inputDate">Date de sortie :</label>
-        <input type="date" id="updateinputDate">
-
-        <button type="submit">Enregistrer</button>
+        <form id="deleteForm">
+            <label for="inputId">ID du Film :</label>
+            <input type="number" id="inputId" required>
+    
+            <button type="submit">Chercher</button>
+        </form>
     </form>
 
     <h2>Suppression d'un film</h2>
@@ -87,9 +66,7 @@
             try {
                 const response = await fetch("http://localhost:8080/api/create", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ name, author, date })
                 });
 
@@ -129,55 +106,6 @@
             }
         });
 
-        document.getElementById("updateForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
-
-            const id = document.getElementById("updateinputId").value.trim();
-            const name = document.getElementById("updateinputName").value.trim();
-            const author = document.getElementById("updateinputAuthor").value.trim();
-            const date = document.getElementById("updateinputDate").value.trim();
-
-            if (!id) {
-                showModal("Erreur : L'ID et au moins un champ à modifier sont requis.");
-                return;
-            }
-
-            try {
-                const response = await fetch(`http://localhost:8080/api/update/${id}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name, author, date })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    showModal("Film mis à jour avec succès !");
-                } else {
-                    showModal("Échec : " + data.error);
-                }
-            } catch (error) {
-                showModal("Erreur de connexion au serveur.");
-            }
-        });
-
-        app.get("/api/read/:id", async (req, res) => {
-            const movieId = parseInt(req.params.id);
-            try {
-                const movies = JSON.parse(await fs.readFile(DATA_PATH, { encoding: "utf-8" }));
-                const movie = movies.find(movie => movie.id === movieId);
-
-                if (!movie) {
-                    res.status(404).send({ error: "Movie not found" });
-                    return;
-                }
-                res.status(200).send(movie);
-            } catch (error) {
-                res.status(500).send({ error: "Server error" });
-            }
-        });
-
-
         document.getElementById("deleteForm").addEventListener("submit", async function(event) {
             event.preventDefault();
 
@@ -210,19 +138,14 @@
         function closeModal() {
             document.getElementById("myModal").style.display = "none";
         }
-        
-        window.onload = function() {
-            document.getElementById("myModal").style.display = "none";
-        };
-        // Fermer la modale si on clique en dehors du contenu
+
         window.onclick = function(event) {
             var modal = document.getElementById("myModal");
             if (event.target === modal) {
                 closeModal();
             }
         };
-
-        
     </script>
+
 </body>
 </html>
