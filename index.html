@@ -3,15 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulaire avec Modale</title>
+    <title>Test API Create</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <h1>Création d'un film</h1>
 
-    <form id="myForm">
-        <label for="inputId">Entrez un ID :</label>
-        <input type="text" id="inputId" required>
-        <button type="button" onclick="openModal()">Chercher</button>
+    <form id="movieForm">
+        <label for="inputName">Titre du Film :</label>
+        <input type="text" id="inputName" required>
+
+        <label for="inputAuthor">Auteur :</label>
+        <input type="text" id="inputAuthor" required>
+
+        <label for="inputDate">Date de sortie :</label>
+        <input type="date" id="inputDate" required>
+
+        <button type="submit">Entrer</button>
     </form>
 
     <!-- Modale -->
@@ -23,14 +31,42 @@
     </div>
 
     <script>
-        function openModal() {
-            var inputValue = document.getElementById("inputId").value.trim();
-            if (inputValue === "") {
-                alert("Veuillez entrer un ID !");
+        document.getElementById("movieForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("inputName").value.trim();
+            const author = document.getElementById("inputAuthor").value.trim();
+            const date = document.getElementById("inputDate").value.trim();
+
+            if (!name || !author || !date) {
+                showModal("Erreur : Tous les champs sont requis.");
                 return;
             }
 
-            document.getElementById("modalText").innerText = "L'ID que vous venez de chercher est : " + inputValue;
+            try {
+                const response = await fetch("http://localhost:8080/api/create", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ name, author, date })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showModal("Succès ! ID créé : " + data.id);
+                } else {
+                    showModal("Échec : " + data.error);
+                }
+            } catch (error) {
+
+                showModal(error);
+            }
+        });
+
+        function showModal(message) {
+            document.getElementById("modalText").innerText = message;
             document.getElementById("myModal").style.display = "flex";
         }
 
@@ -44,7 +80,7 @@
             if (event.target === modal) {
                 closeModal();
             }
-        }
+        };
     </script>
 
 </body>
