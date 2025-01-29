@@ -13,8 +13,25 @@
     <section id="main">
         <div class="row">
             <div>
-                <h2>Ajouter un film</h2>
-                
+                <h2>Création d'un film</h2>
+                <form id="movieForm">
+                    <label for="inputName">Titre du Film :</label>
+                    <input type="text" id="inputName" required>
+
+                    <label for="inputAuthor">Auteur :</label>
+                    <input type="text" id="inputAuthor" required>
+
+                    <label for="inputDate">Date de sortie :</label>
+                    <input type="date" id="inputDate" required>
+
+                    <button type="submit">Entrer</button>
+                </form>
+                <!-- Modale -->
+                <div id="myModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        <p id="modalText"></p>
+                    </div>
             </div>
             <div>
                 <h2>Visualiser un film</h2>
@@ -23,7 +40,6 @@
                     <input type="text" id="inputId" required>
                     <button type="button" onclick="openModal()">Chercher</button>
                 </form>
-            
                 <!-- Modale -->
                 <div id="myModal" class="modal">
                     <div class="modal-content">
@@ -32,25 +48,52 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div>
-                <h2>Modifier un film</h2>
+            <div class="row">
+                <div>
+                    <h2>Modifier un film</h2>
+                </div>
+                <div>
+                    <h2>Supprimer un film</h2>
+                </div>
             </div>
-            <div>
-                <h2>Supprimer un film</h2>
-            </div>
-        </div>
     </section>
     <script>
-        function openModal() {
-            var inputValue = document.getElementById("inputId").value.trim();
-            if (inputValue === "") {
-                alert("Veuillez entrer un ID !");
+        document.getElementById("movieForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("inputName").value.trim();
+            const author = document.getElementById("inputAuthor").value.trim();
+            const date = document.getElementById("inputDate").value.trim();
+
+            if (!name || !author || !date) {
+                showModal("Erreur : Tous les champs sont requis.");
                 return;
             }
 
-            document.getElementById("modalText").innerText = "L'ID que vous venez de chercher est : " + inputValue;
+            try {
+                const response = await fetch("http://localhost:8080/api/create", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ name, author, date })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showModal("Succès ! ID créé : " + data.id);
+                } else {
+                    showModal("Échec : " + data.error);
+                }
+            } catch (error) {
+
+                showModal(error);
+            }
+        });
+
+        function showModal(message) {
+            document.getElementById("modalText").innerText = message;
             document.getElementById("myModal").style.display = "flex";
         }
 
@@ -67,7 +110,7 @@
             if (event.target === modal) {
                 closeModal();
             }
-        }
+        };
     </script>
 </body>
 </html>
