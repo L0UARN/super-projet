@@ -55,7 +55,7 @@ app.post("/api/update/:id", async (request, response) => {
 
 app.get("/read/:id", (req, res) => {
     const movieId = parseInt(req.params.id);
-    const data = fs.readFileSync("./data.json", "utf-8");
+    const data = fs.readFileSync(DATA_PATH, "utf-8");
     console.log(req.params.id);
     const movies = JSON.parse(data);
     const movie = movies.find((movie) => movie.id === movieId);
@@ -66,6 +66,27 @@ app.get("/read/:id", (req, res) => {
         res.status(200).send(movie);
     }
 })
+
+app.delete("/delete/:id", async (req, res) => {
+    const movieId = parseInt(req.params.id);
+    try {
+        const movies = JSON.parse(await fs.readFile(DATA_PATH, { encoding: "utf-8" }));
+
+        const index = movies.findIndex(movie => movie.id === movieId);
+
+        if(index !== -1) {
+            movies.splice(index, 1);
+            await fs.writeFile(DATA_PATH, JSON.stringify(movies));
+
+            res.send("Movie with ID "+ movieId +" deleted");
+        }else{
+            res.status(404).send("Movie not found");
+        }
+
+    } catch (error) {
+        res.status(500).send("Server error");
+    }
+});
 
 app.listen(8080, () => {
 	console.log(`The server is listening on port ${PORT}`);
