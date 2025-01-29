@@ -106,9 +106,9 @@ app.post("/api/update/:id", async (request, response) => {
 	response.send(currentData[requestedDataIndex]);
 });
 
-app.get("/read/:id", (req, res) => {
+app.get("/read/:id", async (req, res) => {
     const movieId = parseInt(req.params.id);
-    const data = fs.readFileSync(DATA_PATH, "utf-8");
+    const data = await fs.readFile(DATA_PATH, { encoding: "utf-8" });
     console.log(req.params.id);
     const movies = JSON.parse(data);
     const movie = movies.find((movie) => movie.id === movieId);
