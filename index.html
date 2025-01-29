@@ -3,25 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulaire avec Modale</title>
+    <title>Accueil</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <form id="myForm">
-        <label for="inputId">Entrez un ID :</label>
-        <input type="text" id="inputId" required>
-        <button type="button" onclick="openModal()">Chercher</button>
-    </form>
-
-    <!-- Modale -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <p id="modalText"></p>
+    <section id="banner">
+        <h1>Welcome home ! </h1>
+    </section>
+    <section id="main">
+        <div class="row">
+            <div>
+                <h2>Ajouter un film</h2>
+                
+            </div>
+            <div>
+                <h2>Visualiser un film</h2>
+                <form id="myForm">
+                    <label for="inputId">Entrez un ID :</label>
+                    <input type="text" id="inputId" required>
+                    <button type="button" onclick="openModal()">Chercher</button>
+                </form>
+            
+                <!-- Modale -->
+                <div id="myModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        <p id="modalText"></p>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-
+        <div class="row">
+            <div>
+                <h2>Modifier un film</h2>
+            </div>
+            <div>
+                <h2>Supprimer un film</h2>
+            </div>
+        </div>
+    </section>
     <script>
         function openModal() {
             var inputValue = document.getElementById("inputId").value.trim();
@@ -37,7 +57,10 @@
         function closeModal() {
             document.getElementById("myModal").style.display = "none";
         }
-
+        
+        window.onload = function() {
+            document.getElementById("myModal").style.display = "none";
+        };
         // Fermer la modale si on clique en dehors du contenu
         window.onclick = function(event) {
             var modal = document.getElementById("myModal");
@@ -46,6 +69,5 @@
             }
         }
     </script>
-
 </body>
 </html>

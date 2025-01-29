@@ -49,7 +49,7 @@ body {
 /* Formulaire */
 form {
     text-align: center;
-    margin-top: 50px;
+    margin-top: 20px;
 }
 
 input {
@@ -70,4 +70,8 @@ button {
 
 button:hover {
     background-color: #0056b3;
+}
+.row {
+    display: flex;
+    gap: 50px;
 }
