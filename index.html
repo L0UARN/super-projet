@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test API Create & Delete</title>
+    <title>Test API Create, Delete & Update</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h2>Création d'un film</h2>
-
+    <h1>Création d'un film</h1>
     <form id="movieForm">
         <label for="inputName">Titre du Film :</label>
         <input type="text" id="inputName" required>
@@ -22,8 +21,17 @@
         <button type="submit">Entrer</button>
     </form>
 
-    <h2>Suppression d'un film</h2>
+    <h1>Visualisation d'un film</h1>
+    <form id="getForm">
+        <form id="deleteForm">
+            <label for="inputId">ID du Film :</label>
+            <input type="number" id="inputId" required>
+    
+            <button type="submit">Chercher</button>
+        </form>
+    </form>
 
+    <h1>Suppression d'un film</h1>
     <form id="deleteForm">
         <label for="inputId">ID du Film :</label>
         <input type="number" id="inputId" required>
@@ -31,6 +39,23 @@
         <button type="submit">Supprimer</button>
     </form>
 
+    <h1>Mise à jour d'un film</h1>
+    <form id="updateForm">
+        <label for="updateId">ID du Film :</label>
+        <input type="number" id="updateId" required>
+
+        <label for="updateName">Nouveau Titre :</label>
+        <input type="text" id="updateName">
+
+        <label for="updateAuthor">Nouvel Auteur :</label>
+        <input type="text" id="updateAuthor">
+
+        <label for="updateDate">Nouvelle Date :</label>
+        <input type="date" id="updateDate">
+
+        <button type="submit">Mettre à jour</button>
+    </form>
+  
     <!-- Modale -->
     <div id="myModal" class="modal">
         <div class="modal-content">
@@ -95,6 +120,72 @@
             }
         });
 
+        document.getElementById("getForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const id = document.getElementById("inputId").value.trim();
+
+            if (!id) {
+                showModal("Erreur : L'ID est requis.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/read/${id}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    showModal(`Film trouvé : \nTitre : ${data.name}\nAuteur : ${data.author}\nDate de sortie : ${data.date}`);
+                } else {
+                    showModal("Échec : " + data.error);
+                }
+            } catch (error) {
+                showModal("Film introuvable");
+            }
+        });
+
+        document.getElementById("updateForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const id = document.getElementById("updateId").value.trim();
+            const name = document.getElementById("updateName").value.trim();
+            const author = document.getElementById("updateAuthor").value.trim();
+            const date = document.getElementById("updateDate").value.trim();
+
+            if (!id) {
+                showModal("Erreur : L'ID du film est requis.");
+                return;
+            }
+
+            const updateData = {};
+            if (name) updateData.name = name;
+            if (author) updateData.author = author;
+            if (date) updateData.date = date;
+
+            if (Object.keys(updateData).length === 0) {
+                showModal("Erreur : Vous devez modifier au moins un champ.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/update/${id}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(updateData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showModal(`Mise à jour réussie : ${JSON.stringify(data)}`);
+                } else {
+                    showModal("Échec : " + data.error);
+                }
+            } catch (error) {
+                showModal("Erreur de connexion au serveur.");
+            }
+        });
+
         function showModal(message) {
             document.getElementById("modalText").innerText = message;
             document.getElementById("myModal").style.display = "flex";
@@ -111,6 +202,5 @@
             }
         };
     </script>
-
 </body>
 </html>

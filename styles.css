@@ -1,6 +1,10 @@
 /* Style global */
 body {
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
     margin: 20px;
     padding: 0;
 }
@@ -27,6 +31,10 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#myModal {
+    display: none;
 }
 
 /* Contenu de la modale */
@@ -57,11 +65,20 @@ h1 {
 
 /* Formulaire */
 form {
+    text-align: center;
+    margin-top: 20px;
     display: flex;
     align-items: center;
     gap: 10px;
     justify-content: center;
     margin-top: 50px;
+}
+
+input {
+    padding: 8px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 /* Champs de saisie */
@@ -80,9 +97,13 @@ button {
     color: white;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
 }
 
 button:hover {
     background-color: #0056b3;
+}
+
+.row {
+    display: flex;
+    gap: 50px;
 }
