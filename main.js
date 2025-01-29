@@ -72,7 +72,7 @@ app.post("/api/update/:id", async (request, response) => {
 		response.send({ error: "Failed to access (read) the database" });
 		return;
 	}
-
+  
 	let currentData = JSON.parse(currentRawData);
 	let requestedDataIndex = currentData.findIndex((e) => e.id == request.params.id);
 	if (requestedDataIndex == -1) {
@@ -80,7 +80,7 @@ app.post("/api/update/:id", async (request, response) => {
 		response.send({ error: `There is no data associated with the id ${response.params.id}` });
 		return;
 	}
-
+  
 	const name = request.body["name"];
 	if (name) {
 		currentData[requestedDataIndex]["name"] = name;
