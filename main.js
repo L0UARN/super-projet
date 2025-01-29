@@ -7,6 +7,60 @@ const DATA_PATH = "./data.json";
 const app = express();
 app.use(express.json());
 
+app.get("/api/create", async (request, response) => {
+	const name = request.body["name"];
+	if (!name) {
+		response.status(400);
+		response.send({ error: "Missing \"name\" parameter."});
+		return;
+	}
+
+	const date = request.body["date"];
+	if (!date) {
+		response.status(400);
+		response.send({ error: "Missing \"date\" parameter."});
+		return;
+	}
+
+	const author = request.body["author"];
+	if (!author) {
+		response.status(400);
+		response.send({ error: "Missing \"author\" parameter."});
+		return;
+	}
+
+	let currentRawData = "";
+	try {
+		currentRawData = await fs.readFile(DATA_PATH, { encoding: "utf-8" });
+	} catch (e) {
+		response.status(500);
+		response.send({ error: "Failed to access (read) the database"});
+		return;
+	}
+
+	let currentData = JSON.parse(currentRawData);
+	const maxId = currentData.reduce((acc, curr) => Math.max(acc, curr), 0);
+	const id = maxId + 1;
+
+	currentData.push({
+		id,
+		name,
+		author,
+		date,
+	});
+
+	try {
+		await fs.writeFile(DATA_PATH, JSON.stringify(currentData));
+	} catch (e) {
+		response.status(500);
+		response.send({ error: "Failed to access (write) the database"});
+		return;
+	}
+
+	response.status(200);
+	response.send({ id });
+});
+
 app.post("/api/update/:id", async (request, response) => {
 	let currentRawData = "";
 	try {
@@ -18,7 +72,6 @@ app.post("/api/update/:id", async (request, response) => {
 	}
 
 	let currentData = JSON.parse(currentRawData);
-
 	let requestedDataIndex = currentData.findIndex((e) => e.id == request.params.id);
 	if (requestedDataIndex == -1) {
 		response.status(404);
@@ -42,7 +95,7 @@ app.post("/api/update/:id", async (request, response) => {
 	}
 
 	try {
-		await fs.writeFile(DATA_PATH, JSON.stringify(currentData));
+		fs.writeFile(DATA_PATH, JSON.stringify(currentData));
 	} catch (e) {
 		response.status(500);
 		response.send({ error: "Failed to access (write) the database"});
