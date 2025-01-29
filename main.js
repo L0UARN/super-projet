@@ -11,21 +11,21 @@ app.post("/api/create", async (request, response) => {
 	const name = request.body["name"];
 	if (!name) {
 		response.status(400);
-		response.send({ error: "Missing \"name\" parameter."});
+		response.send({ error: "Missing \"name\" parameter." });
 		return;
 	}
 
 	const date = request.body["date"];
 	if (!date) {
 		response.status(400);
-		response.send({ error: "Missing \"date\" parameter."});
+		response.send({ error: "Missing \"date\" parameter." });
 		return;
 	}
 
 	const author = request.body["author"];
 	if (!author) {
 		response.status(400);
-		response.send({ error: "Missing \"author\" parameter."});
+		response.send({ error: "Missing \"author\" parameter." });
 		return;
 	}
 
@@ -34,7 +34,7 @@ app.post("/api/create", async (request, response) => {
 		currentRawData = await fs.readFile(DATA_PATH, { encoding: "utf-8" });
 	} catch (e) {
 		response.status(500);
-		response.send({ error: "Failed to access (read) the database"});
+		response.send({ error: "Failed to access (read) the database" });
 		return;
 	}
 
@@ -53,7 +53,7 @@ app.post("/api/create", async (request, response) => {
 		await fs.writeFile(DATA_PATH, JSON.stringify(currentData));
 	} catch (e) {
 		response.status(500);
-		response.send({ error: "Failed to access (write) the database"});
+		response.send({ error: "Failed to access (write) the database" });
 		return;
 	}
 
@@ -67,7 +67,7 @@ app.post("/api/update/:id", async (request, response) => {
 		currentRawData = await fs.readFile(DATA_PATH, { encoding: "utf-8" });
 	} catch (e) {
 		response.status(500);
-		response.send({ error: "Failed to access (read) the database"});
+		response.send({ error: "Failed to access (read) the database" });
 		return;
 	}
 
@@ -98,7 +98,7 @@ app.post("/api/update/:id", async (request, response) => {
 		fs.writeFile(DATA_PATH, JSON.stringify(currentData));
 	} catch (e) {
 		response.status(500);
-		response.send({ error: "Failed to access (write) the database"});
+		response.send({ error: "Failed to access (write) the database" });
 		return;
 	}
 
@@ -107,38 +107,38 @@ app.post("/api/update/:id", async (request, response) => {
 });
 
 app.get("/read/:id", async (req, res) => {
-    const movieId = parseInt(req.params.id);
-    const data = await fs.readFile(DATA_PATH, { encoding: "utf-8" });
-    console.log(req.params.id);
-    const movies = JSON.parse(data);
-    const movie = movies.find((movie) => movie.id === movieId);
-    if(!movie){
-        res.status(404).send("Movie not found");
-        return;
-    }else{
-        res.status(200).send(movie);
-    }
+	const movieId = parseInt(req.params.id);
+	const data = await fs.readFile(DATA_PATH, { encoding: "utf-8" });
+	console.log(req.params.id);
+	const movies = JSON.parse(data);
+	const movie = movies.find((movie) => movie.id === movieId);
+	if (!movie) {
+		res.status(404).send("Movie not found");
+		return;
+	} else {
+		res.status(200).send(movie);
+	}
 })
 
-app.delete("/delete/:id", async (req, res) => {
-    const movieId = parseInt(req.params.id);
-    try {
-        const movies = JSON.parse(await fs.readFile(DATA_PATH, { encoding: "utf-8" }));
+app.delete("/api/delete/:id", async (req, res) => {
+	const movieId = parseInt(req.params.id);
+	try {
+		const movies = JSON.parse(await fs.readFile(DATA_PATH, { encoding: "utf-8" }));
 
-        const index = movies.findIndex(movie => movie.id === movieId);
+		const index = movies.findIndex(movie => movie.id === movieId);
 
-        if(index !== -1) {
-            movies.splice(index, 1);
-            await fs.writeFile(DATA_PATH, JSON.stringify(movies));
+		if (index !== -1) {
+			movies.splice(index, 1);
+			await fs.writeFile(DATA_PATH, JSON.stringify(movies));
 
-            res.send("Movie with ID "+ movieId +" deleted");
-        }else{
-            res.status(404).send("Movie not found");
-        }
-
-    } catch (error) {
-        res.status(500).send("Server error");
-    }
+			res.status(200)
+			res.send({ id: movieId });
+		} else {
+			res.status(404).send({ error: "Movie not found" });
+		}
+	} catch (error) {
+		res.status(500).send({ error: "Server error" });
+	}
 });
 
 app.listen(8080, () => {
