@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Create & Delete</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h2>Création d'un film</h2>
+
+    <form id="movieForm">
+        <label for="inputName">Titre du Film :</label>
+        <input type="text" id="inputName" required>
+
+        <label for="inputAuthor">Auteur :</label>
+        <input type="text" id="inputAuthor" required>
+
+        <label for="inputDate">Date de sortie :</label>
+        <input type="date" id="inputDate" required>
+
+        <button type="submit">Entrer</button>
+    </form>
+
+    <h2>Suppression d'un film</h2>
+
+    <form id="deleteForm">
+        <label for="inputId">ID du Film :</label>
+        <input type="number" id="inputId" required>
+
+        <button type="submit">Supprimer</button>
+    </form>
+
+    <!-- Modale -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <p id="modalText"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("movieForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("inputName").value.trim();
+            const author = document.getElementById("inputAuthor").value.trim();
+            const date = document.getElementById("inputDate").value.trim();
+
+            if (!name || !author || !date) {
+                showModal("Erreur : Tous les champs sont requis.");
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:8080/api/create", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, author, date })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showModal("Succès ! ID créé : " + data.id);
+                } else {
+                    showModal("Échec : " + data.error);
+                }
+            } catch (error) {
+                showModal("Erreur lors de l'ajout du film.");
+            }
+        });
+
+        document.getElementById("deleteForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const id = document.getElementById("inputId").value.trim();
+
+            if (!id) {
+                showModal("Erreur : L'ID est requis.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/delete/${id}`, { method: "DELETE" });
+
+                if (response.ok) {
+                    showModal("Film supprimé avec succès !");
+                } else {
+                    const errorText = await response.text();
+                    showModal("Échec : " + errorText);
+                }
+            } catch (error) {
+                showModal("Erreur de connexion au serveur.");
+            }
+        });
+
+        function showModal(message) {
+            document.getElementById("modalText").innerText = message;
+            document.getElementById("myModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById("myModal");
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+
+</body>
+</html>
