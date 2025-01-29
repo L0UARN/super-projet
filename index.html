@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire avec Modale</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <form id="myForm">
+        <label for="inputId">Entrez un ID :</label>
+        <input type="text" id="inputId" required>
+        <button type="button" onclick="openModal()">Chercher</button>
+    </form>
+
+    <!-- Modale -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <p id="modalText"></p>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            var inputValue = document.getElementById("inputId").value.trim();
+            if (inputValue === "") {
+                alert("Veuillez entrer un ID !");
+                return;
+            }
+
+            document.getElementById("modalText").innerText = "L'ID que vous venez de chercher est : " + inputValue;
+            document.getElementById("myModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+        }
+
+        // Fermer la modale si on clique en dehors du contenu
+        window.onclick = function(event) {
+            var modal = document.getElementById("myModal");
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+
+</body>
+</html>
