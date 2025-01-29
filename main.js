@@ -81,17 +81,17 @@ app.post("/api/update/:id", async (request, response) => {
 
 	const name = request.body["name"];
 	if (name) {
-		requestedData[requestedDataIndex]["name"] = name;
+		currentData[requestedDataIndex]["name"] = name;
 	}
 
 	const author = request.body["author"];
 	if (author) {
-		requestedData[requestedDataIndex]["author"] = author;
+		currentData[requestedDataIndex]["author"] = author;
 	}
 
 	const date = request.body["date"];
 	if (date) {
-		requestedData[requestedDataIndex]["date"] = date;
+		currentData[requestedDataIndex]["date"] = date;
 	}
 
 	try {
