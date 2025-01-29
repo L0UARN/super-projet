@@ -20,6 +20,9 @@ body {
     align-items: center;
 }
 
+#myModal {
+    display: none;
+}
 /* Contenu de la modale */
 .modal-content {
     background-color: white;

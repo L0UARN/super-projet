@@ -24,39 +24,53 @@
                     <label for="inputDate">Date de sortie :</label>
                     <input type="date" id="inputDate" required>
 
-                    <button type="submit">Entrer</button>
-                </form>
-                <!-- Modale -->
-                <div id="myModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal()">&times;</span>
-                        <p id="modalText"></p>
-                    </div>
-            </div>
-            <div>
-                <h2>Visualiser un film</h2>
-                <form id="myForm">
-                    <label for="inputId">Entrez un ID :</label>
-                    <input type="text" id="inputId" required>
-                    <button type="button" onclick="openModal()">Chercher</button>
-                </form>
-                <!-- Modale -->
-                <div id="myModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal()">&times;</span>
-                        <p id="modalText"></p>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div>
-                    <h2>Modifier un film</h2>
-                </div>
-                <div>
-                    <h2>Supprimer un film</h2>
-                </div>
-            </div>
-    </section>
+        <button type="submit">Entrer</button>
+    </form>
+
+    <h2>Visualisation d'un film</h2>
+
+    <form id="getForm">
+        <label for="inputId">ID du Film :</label>
+        <input type="number" id="inputId" required>
+
+        <button type="submit">Chercher</button>
+    </form>
+
+    <h2>Modification d'un film</h2>
+
+    <form id="updateForm">
+        <label for="inputId">ID du Film :</label>
+        <input type="number" id="updateInputId" required>
+
+        <label for="inputName">Titre du Film :</label>
+        <input type="text" id="updateinputName">
+
+        <label for="inputAuthor">Auteur :</label>
+        <input type="text" id="updateinputAuthor">
+
+        <label for="inputDate">Date de sortie :</label>
+        <input type="date" id="updateinputDate">
+
+        <button type="submit">Enregistrer</button>
+    </form>
+
+    <h2>Suppression d'un film</h2>
+
+    <form id="deleteForm">
+        <label for="inputId">ID du Film :</label>
+        <input type="number" id="inputId" required>
+
+        <button type="submit">Supprimer</button>
+    </form>
+
+    <!-- Modale -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <p id="modalText"></p>
+        </div>
+    </div>
+
     <script>
         document.getElementById("movieForm").addEventListener("submit", async function(event) {
             event.preventDefault();
@@ -87,8 +101,104 @@
                     showModal("Échec : " + data.error);
                 }
             } catch (error) {
+                showModal("Erreur lors de l'ajout du film.");
+            }
+        });
 
-                showModal(error);
+        document.getElementById("getForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const id = document.getElementById("inputId").value.trim();
+
+            if (!id) {
+                showModal("Erreur : L'ID est requis.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/read/${id}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    showModal(`Film trouvé : \nTitre : ${data.name}\nAuteur : ${data.author}\nDate de sortie : ${data.date}`);
+                } else {
+                    showModal("Échec : " + data.error);
+                }
+            } catch (error) {
+                showModal("Erreur de connexion au serveur.");
+            }
+        });
+
+        document.getElementById("updateForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const id = document.getElementById("updateinputId").value.trim();
+            const name = document.getElementById("updateinputName").value.trim();
+            const author = document.getElementById("updateinputAuthor").value.trim();
+            const date = document.getElementById("updateinputDate").value.trim();
+
+            if (!id) {
+                showModal("Erreur : L'ID et au moins un champ à modifier sont requis.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/update/${id}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, author, date })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showModal("Film mis à jour avec succès !");
+                } else {
+                    showModal("Échec : " + data.error);
+                }
+            } catch (error) {
+                showModal("Erreur de connexion au serveur.");
+            }
+        });
+
+        app.get("/api/read/:id", async (req, res) => {
+            const movieId = parseInt(req.params.id);
+            try {
+                const movies = JSON.parse(await fs.readFile(DATA_PATH, { encoding: "utf-8" }));
+                const movie = movies.find(movie => movie.id === movieId);
+
+                if (!movie) {
+                    res.status(404).send({ error: "Movie not found" });
+                    return;
+                }
+                res.status(200).send(movie);
+            } catch (error) {
+                res.status(500).send({ error: "Server error" });
+            }
+        });
+
+
+        document.getElementById("deleteForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const id = document.getElementById("inputId").value.trim();
+
+            if (!id) {
+                showModal("Erreur : L'ID est requis.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/delete/${id}`, { method: "DELETE" });
+
+                if (response.ok) {
+                    showModal("Film supprimé avec succès !");
+                } else {
+                    const errorText = await response.text();
+                    showModal("Échec : " + errorText);
+                }
+            } catch (error) {
+                showModal("Erreur de connexion au serveur.");
             }
         });
 
@@ -111,6 +221,8 @@
                 closeModal();
             }
         };
+
+        
     </script>
 </body>
 </html>
