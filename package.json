@@ -1,0 +1,23 @@
+{
+	"name": "super-projet",
+	"version": "1.0.0",
+	"description": "Un super projet",
+	"homepage": "https://gitlab.com/Louarn/super-proje#readme",
+	"bugs": {
+		"url": "https://gitlab.com/Louarn/super-proje/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://gitlab.com/Louarn/super-projet.git"
+	},
+	"license": "ISC",
+	"author": "",
+	"type": "commonjs",
+	"main": "main.js",
+	"scripts": {
+		"test": "node main.js"
+	},
+	"dependencies": {
+		"express": "^4.21.2"
+	}
+}
