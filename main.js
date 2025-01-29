@@ -1,3 +1,4 @@
+
 const express = require("express");
 const fs = require("fs/promises");
 
@@ -107,7 +108,7 @@ app.post("/api/update/:id", async (request, response) => {
 	response.send(currentData[requestedDataIndex]);
 });
 
-app.get("/read/:id", async (req, res) => {
+app.get("/api/read/:id", async (req, res) => {
 	const movieId = parseInt(req.params.id);
 	const data = await fs.readFile(DATA_PATH, { encoding: "utf-8" });
 	console.log(req.params.id);

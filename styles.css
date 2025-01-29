@@ -1,17 +1,8 @@
 /* Style global */
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 0;
     padding: 0;
-}
-
-/* Titre en haut à gauche */
-h1 {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 24px;
-    font-weight: bold;
 }
 
 /* Fond grisé quand la modale est ouverte */
@@ -29,6 +20,9 @@ h1 {
     align-items: center;
 }
 
+#myModal {
+    display: none;
+}
 /* Contenu de la modale */
 .modal-content {
     background-color: white;
@@ -57,22 +51,17 @@ h1 {
 
 /* Formulaire */
 form {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 50px;
+    text-align: center;
+    margin-top: 20px;
 }
 
-/* Champs de saisie */
 input {
     padding: 8px;
+    margin-right: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: 16px;
 }
 
-/* Bouton */
 button {
     padding: 8px 12px;
     border: none;
@@ -80,9 +69,12 @@ button {
     color: white;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
 }
 
 button:hover {
     background-color: #0056b3;
+}
+.row {
+    display: flex;
+    gap: 50px;
 }
