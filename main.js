@@ -7,7 +7,7 @@ const DATA_PATH = "./data.json";
 const app = express();
 app.use(express.json());
 
-app.get("/api/create", async (request, response) => {
+app.post("/api/create", async (request, response) => {
 	const name = request.body["name"];
 	if (!name) {
 		response.status(400);
@@ -39,7 +39,7 @@ app.get("/api/create", async (request, response) => {
 	}
 
 	let currentData = JSON.parse(currentRawData);
-	const maxId = currentData.reduce((acc, curr) => Math.max(acc, curr), 0);
+	const maxId = currentData.reduce((acc, curr) => Math.max(acc, curr["id"]), 0);
 	const id = maxId + 1;
 
 	currentData.push({
