@@ -5,6 +5,7 @@ const PORT = 8080;
 const DATA_PATH = "./data.json";
 
 const app = express();
+app.use(express.static("."));
 app.use(express.json());
 
 app.post("/api/create", async (request, response) => {
